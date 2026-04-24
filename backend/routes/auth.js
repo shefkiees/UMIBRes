@@ -11,15 +11,17 @@ router.get(
   })
 );
 
-// Google callback
 router.get(
   "/google/callback",
+  (req, res, next) => {
+    console.log("CALLBACK HIT");
+    next();
+  },
   passport.authenticate("google", {
     failureRedirect: "/login",
   }),
   (req, res) => {
-   res.redirect("/professor/dashboard");
+    console.log("LOGIN SUCCESS");
+    res.redirect("/professor/dashboard");
   }
 );
-
-export default router;
