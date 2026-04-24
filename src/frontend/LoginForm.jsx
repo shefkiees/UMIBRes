@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import "./LoginForm.css";
 import UMIBLogo from "../assets/umiblogo.jpg";
 import { FcGoogle } from "react-icons/fc";
-
-const DEFAULT_PRODUCTION_ORIGIN = "https://umibres.page";
 const AUTH_ERROR_MESSAGES = {
   oauth_not_configured: "Google sign-in is not configured on the server. Check the production environment variables.",
   unauthorized_domain: "Only @umib.net email addresses are allowed.",
@@ -23,7 +21,7 @@ const getApiBaseUrl = () => {
     return "http://localhost:5000/api";
   }
 
-  return `${DEFAULT_PRODUCTION_ORIGIN}/api`;
+  return `${window.location.origin}/api`;
 };
 
 const LoginForm = () => {
