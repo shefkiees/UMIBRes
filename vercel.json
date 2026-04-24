@@ -3,6 +3,26 @@
     {
       "source": "/api/:path*",
       "destination": "/api/index.js"
+    },
+    {
+      "source": "/login",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/dashboard",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/professor/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/prorector/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/committee/:path*",
+      "destination": "/index.html"
     }
   ]
 }
