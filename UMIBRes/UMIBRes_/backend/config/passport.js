@@ -1,7 +1,9 @@
 /* eslint-env node */
 
 import dotenv from "dotenv";
-dotenv.config();
+import { fileURLToPath } from "url";
+
+dotenv.config({ path: fileURLToPath(new URL("../.env", import.meta.url)) });
 
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
@@ -11,8 +13,7 @@ passport.use(
   new GoogleStrategy(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.GOOGLE_CALLBACK_URL
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET
     },
     async (accessToken, refreshToken, profile, done) => {
       try {

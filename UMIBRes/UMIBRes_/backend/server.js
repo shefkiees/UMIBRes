@@ -1,5 +1,7 @@
 import dotenv from "dotenv";
-dotenv.config();
+import { fileURLToPath } from "url";
+
+dotenv.config({ path: fileURLToPath(new URL("./.env", import.meta.url)) });
 
 import express from "express";
 import session from "express-session";
@@ -10,15 +12,16 @@ import doiRoutes from "./routes/doi.js";
 
 const app = express();
 
-// Middleware
+const isProduction = process.env.NODE_ENV === "production" || Boolean(process.env.VERCEL);
 const callbackOrigin = process.env.GOOGLE_CALLBACK_URL
   ? new URL(process.env.GOOGLE_CALLBACK_URL).origin
   : null;
-const clientUrl = process.env.CLIENT_URL || callbackOrigin;
 const allowedOrigins = new Set([
   "http://localhost:5173",
   "http://127.0.0.1:5173",
-  clientUrl
+  process.env.CLIENT_URL,
+  callbackOrigin,
+  process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null
 ].filter(Boolean));
 
 app.set("trust proxy", 1);
@@ -43,8 +46,8 @@ app.use(session({
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax"
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax"
   }
 }));
 
