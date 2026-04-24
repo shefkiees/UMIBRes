@@ -1,7 +1,6 @@
 /* eslint-env node */
 
-import dotenv from "dotenv";
-dotenv.config();
+import "./env.js";
 
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";

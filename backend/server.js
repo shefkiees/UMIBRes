@@ -1,8 +1,8 @@
-import dotenv from "dotenv";
-dotenv.config();
+import "./config/env.js";
 
 import express from "express";
 import session from "express-session";
+import { checkDbConnection } from "./config/db.js";
 import passport from "./config/passport.js";
 import authRoutes from "./routes/auth.js";
 
@@ -29,4 +29,7 @@ app.get("/", (req, res) => {
 // rute për autentifikim
 app.use("/auth", authRoutes);
 
-app.listen(5000, () => console.log("Server running on http://localhost:5000"));
+app.listen(5000, async () => {
+  console.log("Server running on http://localhost:5000");
+  await checkDbConnection();
+});
