@@ -57,7 +57,6 @@ app.get("/", (req, res) => {
 });
 
 // Route për autentifikim
-app.use("/auth", authRoutes);
 app.use("/api/auth", authRoutes);
 
 // Route për DOI metadata

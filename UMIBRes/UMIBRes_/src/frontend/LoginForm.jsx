@@ -17,7 +17,7 @@ const LoginForm = () => {
     // }, 1000);
 
     // Nese po perdor backend real me Google OAuth:
-    window.location.href = "http://localhost:5000/auth/google";
+   window.location.href = "/api/auth/google";
 
     console.log("Duke u ridrejtuar te Google...");
   };
