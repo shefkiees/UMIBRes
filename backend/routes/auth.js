@@ -1,5 +1,5 @@
 import express from "express";
-import passport from "../config/passport.js";
+import passport, { googleAuthConfigured } from "../config/passport.js";
 
 const router = express.Router();
 const DEFAULT_PRODUCTION_ORIGIN = "https://umibres.page";
@@ -44,8 +44,28 @@ const getFrontendRedirectUrl = (path, params = {}) => {
   return url.toString();
 };
 
+const redirectToLoginWithError = (res, authError) => {
+  res.redirect(getFrontendRedirectUrl("/login", { authError }));
+};
+
+const ensureGoogleAuthConfigured = (res) => {
+  if (googleAuthConfigured) {
+    return true;
+  }
+
+  console.error(
+    "Rejected Google sign-in request because OAuth env vars are missing in this environment."
+  );
+  redirectToLoginWithError(res, "oauth_not_configured");
+  return false;
+};
+
 // start login
 router.get("/google", (req, res, next) => {
+  if (!ensureGoogleAuthConfigured(res)) {
+    return;
+  }
+
   const callbackURL = getGoogleCallbackUrl(req);
 
   console.log("Google OAuth callback URL:", callbackURL);
@@ -58,6 +78,10 @@ router.get("/google", (req, res, next) => {
 
 // callback
 router.get("/google/callback", (req, res, next) => {
+  if (!ensureGoogleAuthConfigured(res)) {
+    return;
+  }
+
   const callbackURL = getGoogleCallbackUrl(req);
 
   passport.authenticate("google", {
@@ -65,7 +89,7 @@ router.get("/google/callback", (req, res, next) => {
   }, (authError, user, info) => {
     if (authError) {
       console.error("Google OAuth callback failed:", authError);
-      res.redirect(getFrontendRedirectUrl("/login", { authError: "oauth_callback_failed" }));
+      redirectToLoginWithError(res, "oauth_callback_failed");
       return;
     }
 
@@ -75,14 +99,14 @@ router.get("/google/callback", (req, res, next) => {
           ? "unauthorized_domain"
           : "google_login_failed";
 
-      res.redirect(getFrontendRedirectUrl("/login", { authError: authErrorCode }));
+      redirectToLoginWithError(res, authErrorCode);
       return;
     }
 
     req.logIn(user, (loginError) => {
       if (loginError) {
         console.error("Failed to create login session:", loginError);
-        res.redirect(getFrontendRedirectUrl("/login", { authError: "session_login_failed" }));
+        redirectToLoginWithError(res, "session_login_failed");
         return;
       }
 

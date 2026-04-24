@@ -5,6 +5,7 @@ import { FcGoogle } from "react-icons/fc";
 
 const DEFAULT_PRODUCTION_ORIGIN = "https://umibres.page";
 const AUTH_ERROR_MESSAGES = {
+  oauth_not_configured: "Google sign-in is not configured on the server. Check the production environment variables.",
   unauthorized_domain: "Only @umib.net email addresses are allowed.",
   oauth_callback_failed: "Google sign-in reached the server, but the login could not be completed.",
   session_login_failed: "Google sign-in succeeded, but the session could not be created.",
