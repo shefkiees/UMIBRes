@@ -1,15 +1,16 @@
 import express from "express";
 import passport, { googleAuthConfigured } from "../config/passport.js";
+import { getAbsoluteUrlEnvValue } from "../config/urlConfig.js";
 
 const router = express.Router();
 const DEFAULT_PRODUCTION_ORIGIN = "https://umibres.page";
 const DEFAULT_GOOGLE_CALLBACK_PATH = "/api/auth/google/callback";
-const frontendBaseUrl = (process.env.FRONTEND_URL
+const frontendBaseUrl = (getAbsoluteUrlEnvValue(process.env.FRONTEND_URL)
   || (process.env.NODE_ENV === "production"
     ? DEFAULT_PRODUCTION_ORIGIN
     : "http://localhost:5173"))
   .replace(/\/$/, "");
-const configuredGoogleCallbackUrl = process.env.GOOGLE_CALLBACK_URL?.replace(/\/$/, "");
+const configuredGoogleCallbackUrl = getAbsoluteUrlEnvValue(process.env.GOOGLE_CALLBACK_URL);
 
 const getRequestBaseUrl = (req) => {
   const forwardedProtoHeader = req.get("x-forwarded-proto");

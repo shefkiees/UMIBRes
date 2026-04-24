@@ -5,13 +5,15 @@ import "./env.js";
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import db from "./db.js";
+import { getAbsoluteUrlEnvValue } from "./urlConfig.js";
 
 const DEFAULT_GOOGLE_CALLBACK_PATH = "/api/auth/google/callback";
 const googleClientId = process.env.GOOGLE_CLIENT_ID;
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
+const configuredGoogleCallbackUrl = getAbsoluteUrlEnvValue(process.env.GOOGLE_CALLBACK_URL);
 const googleCallbackUrl =
-  process.env.NODE_ENV === "production" && process.env.GOOGLE_CALLBACK_URL
-    ? process.env.GOOGLE_CALLBACK_URL
+  process.env.NODE_ENV === "production" && configuredGoogleCallbackUrl
+    ? configuredGoogleCallbackUrl
     : DEFAULT_GOOGLE_CALLBACK_PATH;
 const shouldRequireDbUserSync = process.env.REQUIRE_DB_USER_SYNC === "true";
 const googleAuthConfigured = Boolean(googleClientId && googleClientSecret);

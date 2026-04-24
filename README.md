@@ -40,6 +40,14 @@ Optional environment variables:
 - `FRONTEND_URL` for the post-login redirect target
 - `GOOGLE_CALLBACK_URL` only if production must use a custom absolute callback URL
 
+When adding `FRONTEND_URL` or `GOOGLE_CALLBACK_URL` in Vercel, the value must be only the URL.
+Example:
+
+- `FRONTEND_URL` -> `https://www.umibres.page`
+- `GOOGLE_CALLBACK_URL` -> `https://www.umibres.page/api/auth/google/callback`
+
+Do not paste `GOOGLE_CALLBACK_URL=https://...` into the value field, because Google will treat that as an invalid redirect URI.
+
 Required production environment variables:
 
 - `GOOGLE_CLIENT_ID`
