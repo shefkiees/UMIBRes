@@ -25,3 +25,5 @@ router.get(
     res.redirect("/professor/dashboard");
   }
 );
+
+export default router;
