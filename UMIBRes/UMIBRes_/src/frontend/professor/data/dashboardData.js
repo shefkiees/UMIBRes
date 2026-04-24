@@ -129,6 +129,7 @@ export const integrations = [
     description: "Sinkronizim automatik",
     status: "Connected",
   },
+  
   {
     provider: "Crossref",
     description: "Sinkronizim automatik",

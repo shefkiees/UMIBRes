@@ -23,6 +23,8 @@ import {
 } from "recharts";
 import Sidebar from "../components/Sidebar";
 import TopBar from "../components/TopBar";
+import DoiLookup from "../components/DoiLookup";
+
 import {
   conferenceRows,
   integrations,
@@ -386,24 +388,37 @@ export default function ProfessorDashboard() {
     switch (activePage) {
       case "Overview":
         return renderOverview();
+case "Publikime":
+  return (
+    <>
+      <article className="prof-card" style={{ marginBottom: "20px" }}>
+        <div className="prof-card-header">
+          <div>
+            <h3>Shto publikim me DOI</h3>
+            <p>
+              Shkruani DOI e publikimit dhe sistemi do të marrë automatikisht
+              metadata si titulli, autorët, journal/conference, viti dhe të dhëna të tjera.
+            </p>
+          </div>
+        </div>
 
-      case "Publikime":
-        return (
-          <>
-            {renderListSection(
-              "Publikime",
-              "Regjistri i publikimeve me statusin aktual.",
-              filteredPublications,
-              "title",
-              {
-                icon: <BookOpen size={20} />,
-                title: (row) => row.title,
-                description: (row) => `${row.journal} • ${row.year}`,
-                status: (row) => row.status,
-              }
-            )}
-          </>
-        );
+        <DoiLookup />
+      </article>
+
+      {renderListSection(
+        "Publikime",
+        "Regjistri i publikimeve me statusin aktual.",
+        filteredPublications,
+        "title",
+        {
+          icon: <BookOpen size={20} />,
+          title: (row) => row.title,
+          description: (row) => `${row.journal} • ${row.year}`,
+          status: (row) => row.status,
+        }
+      )}
+    </>
+  );
 
       case "Konferenca":
         return (
