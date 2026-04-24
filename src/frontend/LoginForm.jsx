@@ -1,51 +1,71 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import "./LoginForm.css";
 import UMIBLogo from "../assets/umiblogo.jpg";
 import { FcGoogle } from "react-icons/fc";
 
+const DEFAULT_PRODUCTION_ORIGIN = "https://umibres.page";
+const AUTH_ERROR_MESSAGES = {
+  unauthorized_domain: "Only @umib.net email addresses are allowed.",
+  oauth_callback_failed: "Google sign-in reached the server, but the login could not be completed.",
+  session_login_failed: "Google sign-in succeeded, but the session could not be created.",
+  google_login_failed: "Google sign-in failed. Please try again."
+};
+
+const getApiBaseUrl = () => {
+  const configuredApiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
+  if (configuredApiBaseUrl) {
+    return configuredApiBaseUrl.replace(/\/$/, "");
+  }
+
+  if (window.location.hostname === "localhost") {
+    return "http://localhost:5000/api";
+  }
+
+  return `${DEFAULT_PRODUCTION_ORIGIN}/api`;
+};
+
 const LoginForm = () => {
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const authError = new URLSearchParams(window.location.search).get("authError");
+  const authErrorMessage = authError
+    ? AUTH_ERROR_MESSAGES[authError] || AUTH_ERROR_MESSAGES.google_login_failed
+    : "";
 
   const handleGoogleLogin = () => {
     setLoading(true);
-
-    // Nese po teston vetem frontend-in, perdor kete:
-    // setTimeout(() => {
-    //   navigate("/professor/dashboard");
-    // }, 1000);
-
-    // Nese po perdor backend real me Google OAuth:
-    window.location.href = "http://localhost:5000/auth/google";
-
+    window.location.href = `${getApiBaseUrl()}/auth/google`;
     console.log("Duke u ridrejtuar te Google...");
   };
 
   return (
     <div className="login-wrapper">
       <div className="login-container google-only">
-        {/* Branding Side */}
         <div className="brand-side">
-          <p className="state-title">Republika e Kosovës</p>
+          <p className="state-title">Republika e Kosoves</p>
           <div className="logo-placeholder">
             <img src={UMIBLogo} alt="UMIB Logo" className="university-logo-img" />
           </div>
           <div className="brand-text">
             <h1>UMIB</h1>
             <p className="smu-tag">
-              Sistemi i Menaxhimit Universitar të Kërkimeve Shkencore
+              Sistemi i Menaxhimit Universitar te Kerkimeve Shkencore
             </p>
           </div>
         </div>
 
-        {/* Auth Side */}
         <div className="form-side oauth-center">
           <div className="form-header">
             <h2>Sign in to your account</h2>
           </div>
 
           <div className="oauth-content">
+            {authErrorMessage ? (
+              <p className="domain-restriction" role="alert">
+                {authErrorMessage}
+              </p>
+            ) : null}
+
             <button
               className="google-btn"
               onClick={handleGoogleLogin}
@@ -63,7 +83,7 @@ const LoginForm = () => {
       </div>
 
       <div className="footer-text">
-        © 2026 Universiteti i Mitrovicës "Isa Boletini" - Të gjitha të drejtat e rezervuara.
+        (c) 2026 Universiteti i Mitrovices "Isa Boletini" - Te gjitha te drejtat e rezervuara.
       </div>
     </div>
   );
