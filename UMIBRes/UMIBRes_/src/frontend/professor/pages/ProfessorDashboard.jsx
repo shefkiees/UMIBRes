@@ -24,6 +24,7 @@ import {
 import Sidebar from "../components/Sidebar";
 import TopBar from "../components/TopBar";
 import DoiLookup from "../components/DoiLookup";
+import ConferenceManager from "../components/ConferenceManager";
 
 import {
   conferenceRows,
@@ -388,53 +389,54 @@ export default function ProfessorDashboard() {
     switch (activePage) {
       case "Overview":
         return renderOverview();
-case "Publikime":
-  return (
-    <>
-      <article className="prof-card" style={{ marginBottom: "20px" }}>
-        <div className="prof-card-header">
-          <div>
-            <h3>Shto publikim me DOI</h3>
-            <p>
-              Shkruani DOI e publikimit dhe sistemi do të marrë automatikisht
-              metadata si titulli, autorët, journal/conference, viti dhe të dhëna të tjera.
-            </p>
-          </div>
-        </div>
+      case "Publikime":
+        return (
+          <>
+            <article className="prof-card" style={{ marginBottom: "20px" }}>
+              <div className="prof-card-header">
+                <div>
+                  <h3>Shto publikim me DOI</h3>
+                  <p>
+                    Shkruani DOI e publikimit dhe sistemi do të marrë automatikisht
+                    metadata si titulli, autorët, journal/conference, viti dhe të dhëna të tjera.
+                  </p>
+                </div>
+              </div>
 
-        <DoiLookup />
-      </article>
+              <DoiLookup />
+            </article>
 
-      {renderListSection(
-        "Publikime",
-        "Regjistri i publikimeve me statusin aktual.",
-        filteredPublications,
-        "title",
-        {
-          icon: <BookOpen size={20} />,
-          title: (row) => row.title,
-          description: (row) => `${row.journal} • ${row.year}`,
-          status: (row) => row.status,
-        }
-      )}
-    </>
-  );
+            {renderListSection(
+              "Publikime",
+              "Regjistri i publikimeve me statusin aktual.",
+              filteredPublications,
+              "title",
+              {
+                icon: <BookOpen size={20} />,
+                title: (row) => row.title,
+                description: (row) => `${row.journal} • ${row.year}`,
+                status: (row) => row.status,
+              }
+            )}
+          </>
+        );
 
       case "Konferenca":
         return (
           <>
-            {renderListSection(
-              "Konferenca",
-              "Pjesemarrjet dhe afatet e ardhshme.",
-              filteredConferences,
-              "event",
-              {
-                icon: <CalendarDays size={20} />,
-                title: (row) => row.event,
-                description: (row) => `${row.location} • ${row.date}`,
-                status: (row) => row.status,
-              }
-            )}
+            <article className="prof-card" style={{ marginBottom: "20px" }}>
+              <div className="prof-card-header">
+                <div>
+                  <h3>Shto dhe Menaxho Konferenca</h3>
+                  <p>
+                    Regjistro konferenca, afate submissions dhe menaxho
+                    pjesëmarrjet shkencore.
+                  </p>
+                </div>
+              </div>
+
+              <ConferenceManager />
+            </article>
           </>
         );
 

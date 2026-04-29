@@ -9,6 +9,7 @@ import cors from "cors";
 import passport from "./config/passport.js";
 import authRoutes from "./routes/auth.js";
 import doiRoutes from "./routes/doi.js";
+import conferenceRoutes from "./routes/conferences.js"; 
 
 const app = express();
 
@@ -16,6 +17,7 @@ const isProduction = process.env.NODE_ENV === "production" || Boolean(process.en
 const callbackOrigin = process.env.GOOGLE_CALLBACK_URL
   ? new URL(process.env.GOOGLE_CALLBACK_URL).origin
   : null;
+
 const allowedOrigins = new Set([
   "http://localhost:5173",
   "http://127.0.0.1:5173",
@@ -65,7 +67,11 @@ app.use("/api/auth", authRoutes);
 // Route për DOI metadata
 app.use("/api/doi", doiRoutes);
 
+// ✅ Route për konferenca
+app.use("/api/conferences", conferenceRoutes);
+
 const PORT = process.env.PORT || 5000;
+
 if (!process.env.VERCEL) {
   app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
