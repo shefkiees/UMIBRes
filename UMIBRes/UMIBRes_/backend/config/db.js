@@ -1,40 +1,42 @@
+import "./env.js";
 import mysql from "mysql2/promise";
 
-// Krijo pool (më i mirë se createConnection)
-const db = mysql.createPool({
-  host: process.env.DB_HOST || "localhost",
+const dbConfig = {
+  host: process.env.DB_HOST || "127.0.0.1",
+  port: Number(process.env.DB_PORT || 3306),
   user: process.env.DB_USER || "root",
-  password: process.env.DB_PASSWORD || "",
+  password: process.env.DB_PASSWORD ?? "",
   database: process.env.DB_NAME || "umibres",
   waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
-});
-
-// Funksion për të testuar lidhjen
-const testConnection = async () => {
-  try {
-    const connection = await db.getConnection();
-    console.log("✅ Connected to MySQL database");
-    connection.release();
-  } catch (error) {
-    console.error("❌ Gabim në lidhje me databazën:");
-    
-    if (error.code === "ECONNREFUSED") {
-      console.error("➡️ MySQL server nuk është ndezur.");
-    } else if (error.code === "ER_ACCESS_DENIED_ERROR") {
-      console.error("➡️ Username ose password i gabuar.");
-    } else if (error.code === "ER_BAD_DB_ERROR") {
-      console.error("➡️ Database nuk ekziston.");
-    } else {
-      console.error("➡️ Error:", error.message);
-    }
-
-    process.exit(1); // ndal serverin nëse DB nuk lidhet
-  }
+  connectionLimit: Number(process.env.DB_CONNECTION_LIMIT || 10),
+  queueLimit: 0,
+  connectTimeout: Number(process.env.DB_CONNECT_TIMEOUT || 5000)
 };
 
-// Thirre menjëherë
-testConnection();
+const db = mysql.createPool(dbConfig);
+
+export async function checkDbConnection() {
+  try {
+    const connection = await db.getConnection();
+    await connection.ping();
+    connection.release();
+
+    console.log(`Connected to MySQL at ${dbConfig.host}:${dbConfig.port}/${dbConfig.database}`);
+    return true;
+  } catch (error) {
+    console.error(
+      `Gabim ne lidhje me databazen (${dbConfig.host}:${dbConfig.port}/${dbConfig.database}):`,
+      error
+    );
+
+    if (error.code === "ETIMEDOUT") {
+      console.error(
+        "MySQL po degjon ne porten 3306, por nuk po kthen handshake. Kontrollo XAMPP MySQL dhe restartoje sherbimin."
+      );
+    }
+
+    return false;
+  }
+}
 
 export default db;

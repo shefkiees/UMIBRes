@@ -1,24 +1,40 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import "./LoginForm.css";
 import UMIBLogo from "../assets/umiblogo.jpg";
 import { FcGoogle } from "react-icons/fc";
 
+const AUTH_ERROR_MESSAGES = {
+  oauth_not_configured: "Google sign-in is not configured on the server. Check the production environment variables.",
+  unauthorized_domain: "Only @umib.net email addresses are allowed.",
+  oauth_callback_failed: "Google sign-in reached the server, but the login could not be completed.",
+  session_login_failed: "Google sign-in succeeded, but the session could not be created.",
+  google_login_failed: "Google sign-in failed. Please try again."
+};
+
+const getApiBaseUrl = () => {
+  const configuredApiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
+  if (configuredApiBaseUrl) {
+    return configuredApiBaseUrl.replace(/\/$/, "");
+  }
+
+  if (window.location.hostname === "localhost") {
+    return "http://localhost:5000/api";
+  }
+
+  return `${window.location.origin}/api`;
+};
+
 const LoginForm = () => {
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const authError = new URLSearchParams(window.location.search).get("authError");
+  const authErrorMessage = authError
+    ? AUTH_ERROR_MESSAGES[authError] || AUTH_ERROR_MESSAGES.google_login_failed
+    : "";
 
   const handleGoogleLogin = () => {
     setLoading(true);
-
-    // Nese po teston vetem frontend-in, perdor kete:
-    // setTimeout(() => {
-    //   navigate("/professor/dashboard");
-    // }, 1000);
-
-    // Nese po perdor backend real me Google OAuth:
-   window.location.href = "/api/auth/google";
-
+    window.location.href = `${getApiBaseUrl()}/auth/google`;
     console.log("Duke u ridrejtuar te Google...");
   };
 
@@ -46,6 +62,12 @@ const LoginForm = () => {
           </div>
 
           <div className="oauth-content">
+            {authErrorMessage ? (
+              <p className="domain-restriction" role="alert">
+                {authErrorMessage}
+              </p>
+            ) : null}
+
             <button
               className="google-btn"
               onClick={handleGoogleLogin}

@@ -1,15 +1,13 @@
-import dotenv from "dotenv";
-import { fileURLToPath } from "url";
-
-dotenv.config({ path: fileURLToPath(new URL("./.env", import.meta.url)) });
+import "./config/env.js";
 
 import express from "express";
 import session from "express-session";
 import cors from "cors";
+import { checkDbConnection } from "./config/db.js";
 import passport from "./config/passport.js";
 import authRoutes from "./routes/auth.js";
 import doiRoutes from "./routes/doi.js";
-import conferenceRoutes from "./routes/conferences.js"; 
+import conferenceRoutes from "./routes/conferences.js";
 
 const app = express();
 
@@ -73,8 +71,9 @@ app.use("/api/conferences", conferenceRoutes);
 const PORT = process.env.PORT || 5000;
 
 if (!process.env.VERCEL) {
-  app.listen(PORT, () => {
+  app.listen(PORT, async () => {
     console.log(`Server running on http://localhost:${PORT}`);
+    await checkDbConnection();
   });
 }
 
